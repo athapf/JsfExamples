@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <h:outputStylesheet name="css/layout.css"/>
+    <h:outputScript library="lib" name="jquery-3.1.1.js"/>
+    <h:outputScript library="lib" name="jquery.mask.js"/>
+</h:head>
+<h:body>
+    <f:view>
+        <h:outputLabel value="Hello, world"/>
+
+        <h:form id="form">
+            <h:panelGrid columns="1">
+                <h:messages id="msgs"/>
+
+                <h:panelGrid columns="2">
+                    <h:outputLabel styleClass="label" value="#{msg['jd.ajax.brutto.label']}" for="brutto"/>
+                    <h:inputText styleClass="brutto value" id="brutto" value="#{rechnerModel.brutto}"
+                                 onchange="#{rechnerController.calculate()}">
+                        <f:ajax render="brutto prozent netto"/>
+                    </h:inputText>
+
+                    <h:outputLabel styleClass="label" value="#{msg['jd.ajax.prozent.label']}" for="prozent"/>
+                    <h:panelGroup>
+                        <h:inputText styleClass="prozent value" id="prozent" value="#{rechnerModel.prozent}"
+                                     onchange="#{rechnerController.calculate()}">
+                            <f:ajax render="brutto prozent netto"/>
+                        </h:inputText>
+                        <h:commandLink value="#{msg['jd.ajax.incr.label']}"
+                                       action="#{rechnerController.incrementProzent}"/>
+                    </h:panelGroup>
+
+                    <h:outputLabel styleClass="label" value="#{msg['jd.ajax.netto.label']}" for="netto"/>
+                    <h:inputText styleClass="netto value" id="netto" value="#{rechnerModel.netto}"/>
+                </h:panelGrid>
+
+                <h:panelGroup styleClass="buttons">
+                    <h:commandButton styleClass="button main" value="#{msg['jd.common.ok.button']}"
+                                     type="submit" action="#{rechnerController.save()}"/>
+                    <h:commandButton styleClass="button" value="#{msg['jd.common.clear.button']}"
+                                     type="reset" action="#{rechnerController.clear()}"/>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                    <h:graphicImage id="ajaxloader" library="img" name="ajaxloader.gif" style="display: none;"/>
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+    </f:view>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.brutto').mask("# ##0.00", {reverse: true});
+        });
+
+        jsf.ajax.addOnEvent( function(event) {
+            var ajaxloader = $('img[id*="ajaxloader"]');
+            switch (event.status) {
+                case "begin":
+                    ajaxloader.css('display', 'inline');
+                    break;
+
+                case "complete":
+                    ajaxloader.css('display', 'none');
+                    break;
+            }
+        });
+    </script>
+</h:body>
+</html>
