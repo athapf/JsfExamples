@@ -1,4 +1,4 @@
-package de.thaso.jd.web.model;
+package de.thaso.jd.web.first.model;
 
 import javax.enterprise.inject.Any;
 import java.io.Serializable;

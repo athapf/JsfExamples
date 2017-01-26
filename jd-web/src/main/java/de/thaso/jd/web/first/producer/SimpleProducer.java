@@ -1,6 +1,6 @@
-package de.thaso.jd.web.producer;
+package de.thaso.jd.web.first.producer;
 
-import de.thaso.jd.web.model.SimpleModel;
+import de.thaso.jd.web.first.model.SimpleModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

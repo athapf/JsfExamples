@@ -17,6 +17,7 @@
     <modules>
         <module>jd-web</module>
         <!--<module>jd-ejb</module>-->
+        <module>jd-it</module>
     </modules>
 
     <dependencies>

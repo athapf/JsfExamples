@@ -1,6 +1,6 @@
-package de.thaso.jd.web;
+package de.thaso.jd.web.first;
 
-import de.thaso.jd.web.model.SimpleModel;
+import de.thaso.jd.web.first.model.SimpleModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +16,9 @@ import javax.inject.Named;
  */
 @Named
 @RequestScoped
-public class ChatController {
+public class SimpleController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ChatController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleController.class);
 
     @Inject
     private SimpleModel chatOverviewModel;
