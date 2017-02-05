@@ -13,7 +13,7 @@ import static org.junit.Assert.assertThat;
  * @author thaler
  * @since 26.09.16
  */
-public class OverviewPageTest extends SeleniumTestBase {
+public class OverviewPageIT extends SeleniumTestBase {
 
     @Test
     public void testOverviewPage() {

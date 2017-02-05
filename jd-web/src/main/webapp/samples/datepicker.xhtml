@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+    <!--<scr ipt name="jquery/jquery.js" library="primefaces" target="head"></script>-->
+    <!--<h:output Script library="lib" name="jquery-3.1.1.js"/>-->
+    <title>Jsf-Examples</title>
+</h:head>
+<h:body>
+    <f:view>
+        <h:outputLabel value="DatePicker"/>
+
+        <h:form id="form">
+            <p:panelGrid columns="1">
+                <h:messages id="msgs"/>
+
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{msg['jd.samples.datepicker.startdate.label']}" for="startdate"/>
+                    <h:inputText id="eingabe">
+
+                    </h:inputText>
+                </h:panelGrid>
+                <p:panelGrid columns="2">
+                    <h:outputLabel value="#{msg['jd.samples.datepicker.startdate.label']}" for="startdate"/>
+                    <h:panelGroup>
+                        <p:calendar id="startdate" value="#{datePickerModel.date}"
+                                    converter="#{dateConverter}" converterMessage="Ein Fehler beim Datum!"
+                                    required="false" yearRange="c-100:c+100" showWeek="true"
+                                    mode="popup" navigator="true" pattern="dd.MM.yyyy"
+                                    onkeydown="preventEnter()" onkeypress="preventEnter()" onkeyup="preventEnter()"
+                                    onfocus="enterDatePicker();"
+                                    pagedate=""
+                        >
+                            <f:validator validatorId="thaso.sample.DatePickerValidator" />
+                            <p:ajax event="blur" listener="#{datePickerController.onBlur()}" update="form"/>
+                            <p:ajax event="dateSelect" listener="#{datePickerController.onDateSelect()}" update="form"/>
+                        </p:calendar>
+                    </h:panelGroup>
+                </p:panelGrid>
+                <h:panelGroup>
+                    <p:commandButton value="#{msg['jd.common.ok.button']}"
+                                     type="submit" action="#{datePickerController.ok()}"/>
+                </h:panelGroup>
+            </p:panelGrid>
+            <p:defaultCommand target="dummy"/>
+            <p:commandButton id="dummy" process="@none" global="false" style="display:none;"/>
+        </h:form>
+        <script type="text/javascript">
+            console.log("after form!");
+            function enterDatePicker(event) {
+                console.log("enter date picker ...");
+                $('input[name$="startdate_input"]').css("background-color", "yellow");
+                window.setTimeout(doPreventEnterOn, 2000);
+                $(window).trigger([]);
+                $(window).keydown(preventEnter());
+                $(window).keyup(preventEnter());
+                $(window).keypress(preventEnter());
+                $(document).trigger([]);
+                $(document).keydown(preventEnter());
+                $(document).keyup(preventEnter());
+                $(document).keypress(preventEnter());
+            }
+            function doPreventEnterOn() {
+                console.log(" do prevent enter!")
+                $('input[name$=startdate_input]').trigger([]);
+                $('input[name$=startdate_input]').keydown(preventEnter);
+                $(window).trigger([]);
+                $(window).keydown(preventEnter());
+                $(window).keyup(preventEnter());
+                $(window).keypress(preventEnter());
+                $(document).trigger([]);
+                $(document).keydown(preventEnter());
+                $(document).keyup(preventEnter());
+                $(document).keypress(preventEnter());
+                $('input[name$=startdate_input]').attr('value', '');
+            }
+            function preventEnter(event) {
+                if (event != undefined &amp;&amp; (event.which === 13 || event.keyCode === 13)) {
+                    console.log("got 13!");
+                    event.keyCode = 0
+                    event.preventDefault();
+                    event.stopPropagation();
+                    $('input[name$=startdate_input]').attr('value', '');
+                    console.log("ok");
+                    return false;
+                }
+                console.log("not in event")
+                //$('input[name$=startdate_input]').attr('value', '');
+                return true;
+            }
+        </script>
+    </f:view>
+    <!--&amp;&amp; jQuery(event.target).is(':input:not(textarea,:button,:submit,:reset)') -->
+    <script type="text/javascript">
+        console.log( "from script!" );
+        jQuery( document ).ready(function() {
+            console.log( "ready!" );
+            jQuery('form').off('keypress.disableAutoSubmitOnEnter').on('keypress.disableAutoSubmitOnEnter', function(event) {
+                if (event.which === jQuery.ui.keyCode.ENTER ) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+</h:body>
+</html>

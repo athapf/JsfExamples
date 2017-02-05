@@ -8,6 +8,8 @@
       xmlns:p="http://primefaces.org/ui">
 <h:head>
     <h:outputStylesheet name="css/layout.css"/>
+    <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+    <h:outputScript name="lib/ajax-indicator.js"/>
 </h:head>
 <h:body>
     <f:view>
@@ -59,10 +61,17 @@
 
             switch (event.status) {
                 case "begin":
+                    console.log("start ajax call ...");
+                    incrAjaxCounter();
                     ajaxloader.style.display = 'inline';
+                    obclear();
+                    obadd('one', function () {
+                        console.log("---> trigger event !!!")
+                    });
                     break;
-
                 case "complete":
+                    console.log("... end ajax call.");
+                    decrAjaxCounter();
                     ajaxloader.style.display = 'none';
                     break;
             }

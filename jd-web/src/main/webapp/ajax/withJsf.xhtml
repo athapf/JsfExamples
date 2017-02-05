@@ -58,10 +58,12 @@
 
             switch (event.status) {
                 case "begin":
+                    console.log("start ajax call ...");
                     ajaxloader.style.display = 'inline';
                     break;
 
                 case "complete":
+                    console.log("... end ajax call.");
                     ajaxloader.style.display = 'none';
                     break;
             }
