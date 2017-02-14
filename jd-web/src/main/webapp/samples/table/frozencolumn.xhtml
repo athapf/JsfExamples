@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <h:outputStylesheet name="css/layout.css"/>
+    <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+</h:head>
+<h:body>
+    <f:view>
+        <h:outputLabel value="DataTable with frozen columns and sort"/>
+
+        <h:form id="form">
+            <h:panelGrid columns="1">
+                <h:messages id="msgs"/>
+
+                <h:panelGroup>
+                    <p:inputText value="#{dataTable.filterText}"/>
+                    <p:commandButton value="Filter"
+                                     action="#{dataTableController.filterDataTabel()}"
+                                     update="@form"/>
+                </h:panelGroup>
+                <p:dataTable id="dataTable" value="#{dataTable.filteredRows}" var="row"
+                             scrollable="true" scrollHeight="400" scrollWidth="700" frozenColumns="1"
+                             width="800">
+                    <p:column sortBy="#{row.description}"
+                              style="min-width: 100px">
+                        <f:facet name="header">
+                            <h:outputText value="#{dataTable.descriptionHeader}"/>
+                        </f:facet>
+                        <h:outputText value="#{row.description}"/>
+                    </p:column>
+                    <p:columns var="col" value="#{dataTable.attributes}"
+                               sortBy="#{row.attributes.get(col)}"
+                               style="min-width: 100px">
+                        <f:facet name="header">
+                            <h:outputText value="#{dataTable.getHeaders().get(col)}"/>
+                        </f:facet>
+                        <h:outputText value="#{row.attributes.get(col)}"/>
+                    </p:columns>
+                </p:dataTable>
+            </h:panelGrid>
+        </h:form>
+    </f:view>
+</h:body>
+</html>
