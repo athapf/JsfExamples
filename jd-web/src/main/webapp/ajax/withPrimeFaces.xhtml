@@ -7,6 +7,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
+    <meta http-equiv="Pragma" content="no-cache"/>
     <h:outputStylesheet name="css/layout.css"/>
     <h:outputScript library="primefaces" name="jquery/jquery.js"/>
     <h:outputScript name="lib/ajax-indicator.js"/>
@@ -23,18 +24,18 @@
                     <h:outputLabel styleClass="label" value="#{msg['jd.ajax.brutto.label']}" for="brutto"/>
                     <p:inputText styleClass="value" id="brutto" value="#{rechnerModel.brutto}"
                                  onchange="#{rechnerController.calculate()}">
-                        <f:ajax render="brutto prozent netto"/>
+                        <p:ajax update="brutto prozent netto"/>
                     </p:inputText>
 
                     <h:outputLabel styleClass="label" value="#{msg['jd.ajax.prozent.label']}" for="prozent"/>
                     <h:panelGroup>
                         <p:inputText styleClass="value" id="prozent" value="#{rechnerModel.prozent}"
                                      onchange="#{rechnerController.calculate()}">
-                            <f:ajax render="brutto prozent netto"/>
+                            <p:ajax update="brutto prozent netto"/>
                         </p:inputText>
                         <h:commandLink value="#{msg['jd.ajax.incr.label']}"
                                        action="#{rechnerController.incrementProzent}">
-                            <f:ajax render="prozent netto"/>
+                            <p:ajax update="prozent netto"/>
                         </h:commandLink>
                     </h:panelGroup>
 
@@ -56,25 +57,32 @@
         </h:form>
     </f:view>
     <script type="text/javascript">
-        jsf.ajax.addOnEvent( function(event) {
-            var ajaxloader = document.getElementById("form:ajaxloader");
+        jQuery(document).ready(function () {
+            console.log("document ready");
 
-            switch (event.status) {
-                case "begin":
-                    console.log("start ajax call ...");
-                    incrAjaxCounter();
-                    ajaxloader.style.display = 'inline';
-                    obclear();
-                    obadd('one', function () {
-                        console.log("---> trigger event !!!")
-                    });
-                    break;
-                case "complete":
-                    console.log("... end ajax call.");
-                    decrAjaxCounter();
-                    ajaxloader.style.display = 'none';
-                    break;
+            var ajaxloader = document.getElementById("form:ajaxloader");
+            var oldXHR = window.XMLHttpRequest;
+            function newXHR() {
+                var realXHR = new oldXHR();
+                realXHR.addEventListener("readystatechange", function() {
+                    if(realXHR.readyState==1){
+                        console.log('main ajax call starts ...');
+                        ajaxloader.style.display = 'inline';
+                    }
+                    if(realXHR.readyState==2){
+                        console.log('... main ajax call received ...');
+                    }
+                    if(realXHR.readyState==3){
+                        console.log('... processing request ...');
+                    }
+                    if(realXHR.readyState==4){
+                        console.log('... main ajax call finished!');
+                        ajaxloader.style.display = 'none';
+                    }
+                }, false);
+                return realXHR;
             }
+            window.XMLHttpRequest = newXHR;
         });
     </script>
 </h:body>

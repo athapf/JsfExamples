@@ -6,6 +6,7 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <h:head>
+    <meta http-equiv="Pragma" content="no-cache"/>
     <h:outputStylesheet name="css/layout.css"/>
     <h:outputScript library="lib" name="jquery-3.1.1.js"/>
     <h:outputScript library="lib" name="jquery.mask.js"/>
@@ -32,7 +33,9 @@
                             <f:ajax render="brutto prozent netto"/>
                         </h:inputText>
                         <h:commandLink value="#{msg['jd.ajax.incr.label']}"
-                                       action="#{rechnerController.incrementProzent}"/>
+                                       action="#{rechnerController.incrementProzent}">
+                                <f:ajax render="prozent netto"/>
+                        </h:commandLink>
                     </h:panelGroup>
 
                     <h:outputLabel styleClass="label" value="#{msg['jd.ajax.netto.label']}" for="netto"/>
@@ -53,21 +56,34 @@
         </h:form>
     </f:view>
     <script type="text/javascript">
-        $(document).ready(function(){
-            $('.brutto').mask("# ##0.00", {reverse: true});
-        });
+        jQuery(document).ready(function () {
+            jQuery('.brutto').mask("# ##0.00", {reverse: true});
 
-        jsf.ajax.addOnEvent( function(event) {
-            var ajaxloader = $('img[id*="ajaxloader"]');
-            switch (event.status) {
-                case "begin":
-                    ajaxloader.css('display', 'inline');
-                    break;
+            console.log("document ready");
 
-                case "complete":
-                    ajaxloader.css('display', 'none');
-                    break;
+            var ajaxloader = document.getElementById("form:ajaxloader");
+            var oldXHR = window.XMLHttpRequest;
+            function newXHR() {
+                var realXHR = new oldXHR();
+                realXHR.addEventListener("readystatechange", function() {
+                    if(realXHR.readyState==1){
+                        console.log('main ajax call starts ...');
+                        ajaxloader.style.display = 'inline';
+                    }
+                    if(realXHR.readyState==2){
+                        console.log('... main ajax call received ...');
+                    }
+                    if(realXHR.readyState==3){
+                        console.log('... processing request ...');
+                    }
+                    if(realXHR.readyState==4){
+                        console.log('... main ajax call finished!');
+                        ajaxloader.style.display = 'none';
+                    }
+                }, false);
+                return realXHR;
             }
+            window.XMLHttpRequest = newXHR;
         });
     </script>
 </h:body>

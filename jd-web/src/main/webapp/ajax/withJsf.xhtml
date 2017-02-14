@@ -53,21 +53,31 @@
         </h:form>
     </f:view>
     <script type="text/javascript">
-        jsf.ajax.addOnEvent( function(event) {
-            var ajaxloader = document.getElementById("form:ajaxloader");
+        console.log("document ready");
 
-            switch (event.status) {
-                case "begin":
-                    console.log("start ajax call ...");
+        var ajaxloader = document.getElementById("form:ajaxloader");
+        var oldXHR = window.XMLHttpRequest;
+        function newXHR() {
+            var realXHR = new oldXHR();
+            realXHR.addEventListener("readystatechange", function() {
+                if(realXHR.readyState==1){
+                    console.log('main ajax call starts ...');
                     ajaxloader.style.display = 'inline';
-                    break;
-
-                case "complete":
-                    console.log("... end ajax call.");
+                }
+                if(realXHR.readyState==2){
+                    console.log('... main ajax call received ...');
+                }
+                if(realXHR.readyState==3){
+                    console.log('... processing request ...');
+                }
+                if(realXHR.readyState==4){
+                    console.log('... main ajax call finished!');
                     ajaxloader.style.display = 'none';
-                    break;
-            }
-        });
+                }
+            }, false);
+            return realXHR;
+        }
+        window.XMLHttpRequest = newXHR;
     </script>
 </h:body>
 </html>
