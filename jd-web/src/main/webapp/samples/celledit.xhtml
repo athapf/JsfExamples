@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <h:outputStylesheet name="css/layout.css"/>
+    <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+    <h:outputScript name="lib/ajax-indicator.js"/>
+</h:head>
+<h:body>
+    <f:view>
+        <h:outputLabel value="CellEdit for selenium"/>
+
+        <h:form id="form">
+            <h:panelGrid columns="1">
+                <h:messages id="messages"/>
+
+                <h:panelGrid columns="1">
+                    <h:outputLabel styleClass="label" value="#{msg['jd.ajax.brutto.label']}" for="editColumns"/>
+                    <p:dataTable id="editColumns" var="entry" value="#{cellEditModel.rows}" editable="true" editMode="cell">
+                        <p:column headerText="Key">
+                            <p:cellEditor id="key">
+                                <f:facet name="output"><h:outputText value="#{entry.key}"/></f:facet>
+                                <f:facet name="input"><p:inputText id="keyEdit" value="#{entry.key}" style="width:100%"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column headerText="Value">
+                            <p:cellEditor id="value">
+                                <f:facet name="output"><h:outputText value="#{entry.value}"/></f:facet>
+                                <f:facet name="input"><p:inputTextarea id="textareaEdit" value="#{entry.value}" maxlength="30" style="width:450px"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGrid>
+
+                <h:panelGroup styleClass="buttons">
+                    <p:commandButton styleClass="button main" value="#{msg['jd.common.ok.button']}"
+                                     type="submit" action="#{rechnerController.save()}"/>
+                    <p:commandButton styleClass="button" value="#{msg['jd.common.clear.button']}"
+                                     type="reset" action="#{rechnerController.clear()}"/>
+                </h:panelGroup>
+
+                <h:panelGroup>
+                    <h:graphicImage id="ajaxloader" library="img" name="ajaxloader.gif" style="display: none;"/>
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+    </f:view>
+    <script type="text/javascript">
+        jQuery(document).ready(function () {
+            console.log("document ready");
+
+            var ajaxloader = document.getElementById("form:ajaxloader");
+            var oldXHR = window.XMLHttpRequest;
+            function newXHR() {
+                var realXHR = new oldXHR();
+                realXHR.addEventListener("readystatechange", function() {
+                    if(realXHR.readyState==1){
+                        console.log('main ajax call starts ...');
+                        ajaxloader.style.display = 'inline';
+                    }
+                    if(realXHR.readyState==2){
+                        console.log('... main ajax call received ...');
+                    }
+                    if(realXHR.readyState==3){
+                        console.log('... processing request ...');
+                    }
+                    if(realXHR.readyState==4){
+                        console.log('... main ajax call finished!');
+                        ajaxloader.style.display = 'none';
+                    }
+                }, false);
+                return realXHR;
+            }
+            window.XMLHttpRequest = newXHR;
+        });
+    </script>
+</h:body>
+</html>
