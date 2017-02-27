@@ -1,4 +1,4 @@
-package de.thaso.jd.web.it.common;
+package de.thaso.jd.web.it.main;
 
 import de.thaso.jd.web.it.base.SeleniumTestBase;
 import org.junit.Test;
