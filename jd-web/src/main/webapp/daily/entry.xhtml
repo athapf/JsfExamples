@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <h:outputStylesheet name="css/layout.css"/>
+    <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+    <h:outputScript name="lib/ajax-indicator.js"/>
+</h:head>
+<h:body>
+    <f:view>
+        <h:outputLabel value="#{msg['work.entry.title']}"/>
+
+        <h:form id="form">
+            <h:messages id="messages"/>
+
+            <h:panelGrid columns="1">
+
+                <h:panelGrid columns="2">
+                    <h:outputLabel styleClass="label" value="#{msg['work.entry.date.label']}" for="date"/>
+                    <p:inputText styleClass="value" id="date" value="#{dpEntryModel.date}"/>
+
+                    <h:outputLabel styleClass="label" value="#{msg['work.entry.title.label']}" for="title"/>
+                    <p:inputText styleClass="value" id="title" value="#{dpEntryModel.title}"/>
+
+                    <h:outputLabel styleClass="label" value="#{msg['work.entry.kind.label']}" for="kind"/>
+                    <p:inputText styleClass="value" id="kind" value="#{dpEntryModel.kind}"/>
+                </h:panelGrid>
+
+                <h:panelGroup styleClass="buttons">
+                    <p:commandButton styleClass="button main"
+                                     id="saveButton" value="#{msg['work.button.save.label']}"
+                                     type="submit" action="#{dpEntryController.saveEntry()}"/>
+                    <p:commandButton styleClass="button"
+                                     id="cancelButton" value="#{msg['work.button.cancel.label']}"
+                                     type="submit" action="#{dpEntryController.cancelEntry()}"/>
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+    </f:view>
+</h:body>
+</html>

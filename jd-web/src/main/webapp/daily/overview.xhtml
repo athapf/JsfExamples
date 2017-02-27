@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <h:outputStylesheet name="css/layout.css"/>
+    <h:outputScript library="primefaces" name="jquery/jquery.js"/>
+    <h:outputScript name="lib/ajax-indicator.js"/>
+</h:head>
+<h:body>
+    <f:view>
+        <h:outputLabel value="#{msg['work.overview.title']}"/>
+
+        <h:form id="form">
+            <h:messages id="messages"/>
+
+            <h:panelGrid columns="1">
+
+                <h:panelGrid columns="1">
+                    <h:outputLabel styleClass="label" value="#{msg['work.overview.entrylist.label']}" for="entrylist"/>
+                    <p:dataTable id="entrylist" value="#{dpOverviewModel.tableRowList}"
+                                 var="row">
+                        <p:column id="date">
+                            <f:facet name="header">
+                                <h:outputText value="#{msg['work.overview.entrylist.date.header']}"/>
+                            </f:facet>
+                            <h:outputText value="#{row.date}"/>
+                        </p:column>
+                        <p:column id="title">
+                            <f:facet name="header">
+                                <h:outputText value="#{msg['work.overview.entrylist.title.header']}"/>
+                            </f:facet>
+                            <h:outputText value="#{row.title}"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGrid>
+
+                <h:panelGroup styleClass="buttons">
+                    <p:commandButton styleClass="button main"
+                                     id="createButton" value="#{msg['work.button.new.label']}"
+                                     type="submit" action="#{dpOverviewController.createEntry()}"/>
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+    </f:view>
+</h:body>
+</html>
