@@ -20,4 +20,17 @@ public class EntryPage extends StandardPage {
     @FindBy(how = How.CSS, css = "*[id$='cancelButton']")
     @PageObjectComponent
     private ButtonCO cancelButton;
+
+    @Override
+    public String getPageId() {
+        return "entryPage";
+    }
+
+    public ButtonCO getSaveButton() {
+        return saveButton;
+    }
+
+    public ButtonCO getCancelButton() {
+        return cancelButton;
+    }
 }

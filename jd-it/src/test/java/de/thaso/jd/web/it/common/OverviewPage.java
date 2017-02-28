@@ -16,4 +16,13 @@ public class OverviewPage extends StandardPage {
     @FindBy(how = How.CSS, css = "*[id$='createButton']")
     @PageObjectComponent
     private ButtonCO createButton;
+
+    @Override
+    public String getPageId() {
+        return "overviewPage";
+    }
+
+    public ButtonCO getCreateButton() {
+        return createButton;
+    }
 }

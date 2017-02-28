@@ -1,10 +1,9 @@
 package de.thaso.jd.web.it.common;
 
 import de.thaso.jd.web.it.selenium.BasePO;
-import de.thaso.jd.web.it.selenium.ButtonCO;
-import de.thaso.jd.web.it.selenium.PageObjectComponent;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.How;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 /**
  * StandardPageObject
@@ -12,5 +11,13 @@ import org.openqa.selenium.support.How;
  * @author thaler
  * @since 27.02.17
  */
-public class StandardPage extends BasePO {
+public abstract class StandardPage extends BasePO {
+
+    public abstract String getPageId();
+
+    @Override
+    public boolean isCurrentPage(final WebDriver driver) {
+        final WebElement element = driver.findElement(By.id(getPageId()));
+        return element != null;
+    }
 }
