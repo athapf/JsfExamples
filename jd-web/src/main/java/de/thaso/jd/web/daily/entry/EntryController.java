@@ -3,6 +3,7 @@ package de.thaso.jd.web.daily.entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -12,10 +13,12 @@ import javax.inject.Named;
  * @author thaler
  * @since 27.02.17
  */
+@ApplicationScoped
 @Named("dpEntryController")
 public class EntryController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntryController.class);
+    private final static Object obj = new Object();
 
     @Inject
     private EntryModel entryModel;
@@ -24,12 +27,24 @@ public class EntryController {
         LOG.info("got a save event.");
         LOG.info("Data: " + entryModel.toString());
 
+        LOG.info("do some very long work ...");
+        synchronized (obj) {
+            try {
+                obj.wait(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        LOG.info("... long work ready.");
         return "overview.xhtml";
     }
 
     public String cancelEntry() {
         LOG.info("got a cancel event.");
 
+        for (int i = 0; i < 100000000; i++) {
+            int a = i + 1;
+        }
         return "overview.xhtml";
     }
 }

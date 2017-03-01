@@ -7,7 +7,7 @@
         </layout>
     </appender>
 
-    <logger name="de.thaso" level="debug">
+    <logger name="de.thaso" level="debug" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 

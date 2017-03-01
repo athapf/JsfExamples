@@ -48,6 +48,14 @@
             </h:panelGrid>
         </h:form>
     </f:view>
+    <p:ajaxStatus>
+        <f:facet name="start">
+            <p:graphicImage library="img" name="ajaxloader.gif"/>
+        </f:facet>
+        <f:facet name="complete">
+            <h:outputText value=""/>
+        </f:facet>
+    </p:ajaxStatus>
     <div id="overviewPage">&#160;</div>
 </h:body>
 </html>
