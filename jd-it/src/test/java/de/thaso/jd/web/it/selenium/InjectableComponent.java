@@ -1,6 +1,7 @@
 package de.thaso.jd.web.it.selenium;
 
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * InjectableComponent
@@ -10,5 +11,5 @@ import org.openqa.selenium.WebElement;
  */
 public interface InjectableComponent {
 
-    void injectElement(WebElement webElement);
+    void injectElement(RemoteWebDriver webDriver, WebElement webElement);
 }

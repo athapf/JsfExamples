@@ -2,7 +2,9 @@ package de.thaso.jd.web.it.selenium;
 
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 /**
  * BaseComponentObject
@@ -10,12 +12,14 @@ import org.openqa.selenium.WebElement;
  * @author thaler
  * @since 27.02.17
  */
-public class BaseCO implements InjectableComponent {
+public abstract class BaseCO implements InjectableComponent {
 
     private WebElement webElement;
+    private RemoteWebDriver webDriver;
 
     @Override
-    public void injectElement(final WebElement webElement) {
+    public void injectElement(final RemoteWebDriver webDriver, final WebElement webElement) {
+        this.webDriver = webDriver;
         this.webElement = webElement;
     }
 
@@ -51,5 +55,15 @@ public class BaseCO implements InjectableComponent {
     protected void doClick(final WebElement webElement) {
         webElement.click();
         waitForElement(webElement);
+    }
+
+    protected void executeScript(final String script, final Object... args) {
+        webDriver.executeScript(script, args);
+    }
+
+    protected void triggerEvent(final String eventName) {
+        executeScript("var event = document.createEvent('Event');"
+                + "event.initEvent('" + eventName + "', true, true); "
+                + "return arguments[0].dispatchEvent(event)", webElement);
     }
 }

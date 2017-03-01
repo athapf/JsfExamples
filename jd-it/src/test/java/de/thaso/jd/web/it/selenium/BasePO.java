@@ -17,23 +17,29 @@ import java.lang.reflect.Field;
  * @author thaler
  * @since 27.02.17
  */
-public abstract class BasePO extends BaseCO {
+public abstract class BasePO {
 
     private static Logger LOG = LoggerFactory.getLogger(BasePO.class);
 
-    public static <T extends BasePO> T nextPage(final RemoteWebDriver driver, Class<T> pageClass) {
+    private RemoteWebDriver webDriver;
+
+    public static <T extends BasePO> T nextPage(final RemoteWebDriver webDriver, Class<T> pageClass) {
         try {
             final T page = pageClass.newInstance();
-            page.waitForPage(driver);
+            final Field driverField = BasePO.class.getDeclaredField("webDriver");
+            driverField.setAccessible(true);
+            driverField.set(page, webDriver);
+
+            page.waitForPage();
 
             for (final Field field : pageClass.getDeclaredFields()) {
                 if (field.getAnnotation(PageObjectComponent.class) != null) {
 
                     final FindBy findBy = field.getAnnotation(FindBy.class);
-                    final WebElement webElement = driver.findElementByCssSelector(findBy.css());
+                    final WebElement webElement = webDriver.findElementByCssSelector(findBy.css());
 
                     final InjectableComponent instance = (InjectableComponent)field.getType().newInstance();
-                    instance.injectElement(webElement);
+                    instance.injectElement(webDriver, webElement);
 
                     field.setAccessible(true);
                     field.set(page, instance);
@@ -45,28 +51,38 @@ public abstract class BasePO extends BaseCO {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    public abstract boolean isCurrentPage(final WebDriver driver);
+    public abstract boolean isCurrentPage();
 
-    public boolean waitForPage(final RemoteWebDriver driver) {
+    public RemoteWebDriver getWebDriver() {
+        return webDriver;
+    }
+
+    public <T extends BasePO> T nextPage(Class<T> pageClass) {
+        return nextPage(webDriver, pageClass);
+    }
+
+    public boolean waitForPage() {
         // waitForAjax();
 
         final ExpectedCondition<Boolean> waitForPageCondition = new ExpectedCondition<Boolean>() {
 
             @Override
             public Boolean apply(final WebDriver webDriver) {
-                return isCurrentPage(webDriver);
+                return isCurrentPage();
             }
         };
 
         try {
-            new WebDriverWait(driver, 5).until(waitForPageCondition);
+            new WebDriverWait(webDriver, 5).until(waitForPageCondition);
         } catch (Exception e) {
             return false;
         }
-        return isCurrentPage(driver);
+        return isCurrentPage();
     }
 }

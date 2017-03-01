@@ -42,4 +42,13 @@ public class EntryModel implements Serializable {
     public void setKind(final EntryKind kind) {
         this.kind = kind;
     }
+
+    @Override
+    public String toString() {
+        return "EntryModel{" +
+                "date=" + date +
+                ", title='" + title + '\'' +
+                ", kind=" + kind +
+                '}';
+    }
 }
