@@ -1,6 +1,6 @@
-package de.thaso.jd.web.it.common;
+package de.thaso.jd.web.it.pages;
 
-import de.thaso.jd.web.it.selenium.BasePO;
+import de.thaso.jd.web.it.base.BasePO;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 

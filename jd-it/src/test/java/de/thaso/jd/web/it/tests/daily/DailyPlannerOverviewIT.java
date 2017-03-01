@@ -1,8 +1,8 @@
-package de.thaso.jd.web.it.daily;
+package de.thaso.jd.web.it.tests.daily;
 
 import de.thaso.jd.web.it.base.SeleniumTestBase;
-import de.thaso.jd.web.it.common.EntryPage;
-import de.thaso.jd.web.it.common.OverviewPage;
+import de.thaso.jd.web.it.pages.EntryPage;
+import de.thaso.jd.web.it.pages.OverviewPage;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 

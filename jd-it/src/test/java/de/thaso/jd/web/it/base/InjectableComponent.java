@@ -1,4 +1,4 @@
-package de.thaso.jd.web.it.selenium;
+package de.thaso.jd.web.it.base;
 
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;

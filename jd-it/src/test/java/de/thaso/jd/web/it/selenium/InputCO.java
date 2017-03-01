@@ -1,5 +1,7 @@
 package de.thaso.jd.web.it.selenium;
 
+import de.thaso.jd.web.it.base.BaseCO;
+
 /**
  * ButtonCO
  *

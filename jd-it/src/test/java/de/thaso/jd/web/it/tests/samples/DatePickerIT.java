@@ -1,4 +1,4 @@
-package de.thaso.jd.web.it.samples;
+package de.thaso.jd.web.it.tests.samples;
 
 import de.thaso.jd.web.it.base.SeleniumTestBase;
 import org.junit.Test;

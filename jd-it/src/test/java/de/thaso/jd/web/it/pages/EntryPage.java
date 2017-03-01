@@ -1,8 +1,8 @@
-package de.thaso.jd.web.it.common;
+package de.thaso.jd.web.it.pages;
 
 import de.thaso.jd.web.it.selenium.ButtonCO;
 import de.thaso.jd.web.it.selenium.InputCO;
-import de.thaso.jd.web.it.selenium.PageObjectComponent;
+import de.thaso.jd.web.it.base.PageObjectComponent;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 

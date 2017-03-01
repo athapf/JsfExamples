@@ -1,7 +1,6 @@
 package de.thaso.jd.web.it.base;
 
 import de.thaso.jd.web.it.glassfish.GlassfishEmbeddedServer;
-import de.thaso.jd.web.it.selenium.BasePO;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.AfterClass;
