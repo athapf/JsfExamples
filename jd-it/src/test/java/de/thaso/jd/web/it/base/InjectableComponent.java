@@ -11,5 +11,5 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 public interface InjectableComponent {
 
-    void injectElement(RemoteWebDriver webDriver, WebElement webElement);
+    void injectElement(RemoteWebDriver webDriver, WebElement webElement, String cssSelector);
 }

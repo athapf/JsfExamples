@@ -1,5 +1,6 @@
 package de.thaso.jd.web.daily.entry;
 
+import de.thaso.jd.web.daily.utils.WaitHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,22 +18,13 @@ import javax.inject.Named;
 public class EntryProducer {
 
     private final static Logger LOG = LoggerFactory.getLogger(EntryProducer.class);
-    private final static Object obj = new Object();
 
     @Produces
     @RequestScoped
     @Named("dpEntryModel")
     public EntryModel produceEntryModel(@New EntryModel entryModel) {
-
-        LOG.info("do some very long work ...");
-        synchronized (obj) {
-            try {
-                obj.wait(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        LOG.info("... long work ready.");
+        LOG.info("produce EntryModel");
+        WaitHelper.pause();
         return entryModel;
     }
 }

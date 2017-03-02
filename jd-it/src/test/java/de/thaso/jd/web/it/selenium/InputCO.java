@@ -17,9 +17,11 @@ public class InputCO extends BaseCO {
     public void setValue(final String value) {
         executeScript("arguments[0].value = arguments[1];", getWebElement(), value);
         triggerEvent("change");
+        waitForAjax();
     }
 
     public String getValue() {
+        waitForElement();
         return getWebElement().getAttribute("value");
     }
 }

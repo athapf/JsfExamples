@@ -39,7 +39,7 @@ public abstract class BasePO {
                     final WebElement webElement = webDriver.findElementByCssSelector(findBy.css());
 
                     final InjectableComponent instance = (InjectableComponent)field.getType().newInstance();
-                    instance.injectElement(webDriver, webElement);
+                    instance.injectElement(webDriver, webElement, findBy.css());
 
                     field.setAccessible(true);
                     field.set(page, instance);

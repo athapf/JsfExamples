@@ -1,5 +1,6 @@
 package de.thaso.jd.web.daily.entry;
 
+import de.thaso.jd.web.daily.utils.WaitHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +19,6 @@ import javax.inject.Named;
 public class EntryController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntryController.class);
-    private final static Object obj = new Object();
 
     @Inject
     private EntryModel entryModel;
@@ -27,15 +27,7 @@ public class EntryController {
         LOG.info("got a save event.");
         LOG.info("Data: " + entryModel.toString());
 
-        LOG.info("do some very long work ...");
-        synchronized (obj) {
-            try {
-                obj.wait(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        LOG.info("... long work ready.");
+        WaitHelper.pause();
         return "overview.xhtml";
     }
 

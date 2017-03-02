@@ -3,7 +3,6 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
@@ -29,7 +28,10 @@
                     <p:inputText styleClass="value" id="title" value="#{dpEntryModel.title}"/>
 
                     <h:outputLabel styleClass="label" value="#{msg['work.entry.kind.label']}" for="kind"/>
-                    <p:inputText styleClass="value" id="kind" value="#{dpEntryModel.kind}"/>
+                    <p:inputText styleClass="value" id="kind" value="#{dpEntryModel.kind}"
+                                 converter="kindConverter">
+                        <p:ajax update="@this"/>
+                    </p:inputText>
                 </h:panelGrid>
 
                 <h:panelGroup styleClass="buttons">
@@ -43,7 +45,11 @@
             </h:panelGrid>
         </h:form>
     </f:view>
-    <p:ajaxStatus>
+
+    <script type="text/javascript">
+        var ajaxindicator = false;
+    </script>
+    <p:ajaxStatus onstart="ajaxindicator = true;" oncomplete="ajaxindicator = false;">
         <f:facet name="start">
             <p:graphicImage library="img" name="ajaxloader.gif"/>
         </f:facet>

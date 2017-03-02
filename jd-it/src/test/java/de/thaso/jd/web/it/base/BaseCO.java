@@ -2,8 +2,14 @@ package de.thaso.jd.web.it.base;
 
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * BaseComponentObject
@@ -13,13 +19,17 @@ import org.openqa.selenium.remote.RemoteWebDriver;
  */
 public abstract class BaseCO implements InjectableComponent {
 
+    private static Logger LOG = LoggerFactory.getLogger(BaseCO.class);
+
     private WebElement webElement;
     private RemoteWebDriver webDriver;
+    private String cssSelector;
 
     @Override
-    public void injectElement(final RemoteWebDriver webDriver, final WebElement webElement) {
+    public void injectElement(final RemoteWebDriver webDriver, final WebElement webElement, final String cssSelector) {
         this.webDriver = webDriver;
         this.webElement = webElement;
+        this.cssSelector = cssSelector;
     }
 
     protected WebElement getWebElement() {
@@ -47,22 +57,60 @@ public abstract class BaseCO implements InjectableComponent {
         return webelement != null && webelement.getClass().getName().contains("Proxy");
     }
 
-    public boolean waitForElement(final WebElement element) {
-        return false;
+    protected boolean waitForElement() {
+        waitForAjax();
+
+        try {
+            final Boolean result = new WebDriverWait(webDriver, 1000)
+                    .until(new ExpectedCondition<Boolean>() {
+                        @Override
+                        public Boolean apply(final WebDriver driver) {
+                            try {
+                                try {
+                                    webElement.getAttribute("id");
+                                } catch (StaleElementReferenceException se) {
+                                    webElement = webDriver.findElementByCssSelector(cssSelector);
+                                }
+                            } catch (NoSuchElementException e) {
+                                LOG.info("waitForElement failed : " + e.getMessage());
+                                return false;
+                            }
+                            return true;
+                        }
+                    });
+            return result;
+        } catch (TimeoutException e) {
+            LOG.info("waitForElement failed : " + e.getMessage());
+            return false;
+        }
     }
 
     protected void doClick(final WebElement webElement) {
+        waitForElement();
         webElement.click();
-        waitForElement(webElement);
     }
 
-    protected void executeScript(final String script, final Object... args) {
-        webDriver.executeScript(script, args);
+    protected Object executeScript(final String script, final Object... args) {
+        return webDriver.executeScript(script, args);
     }
 
     protected void triggerEvent(final String eventName) {
         executeScript("var event = document.createEvent('Event');"
                 + "event.initEvent('" + eventName + "', true, true); "
                 + "return arguments[0].dispatchEvent(event)", webElement);
+    }
+
+    protected void waitForAjax() {
+        final Object obj = new Object();
+        while ((boolean) executeScript("return ajaxindicator;")) {
+            synchronized (obj) {
+                try {
+                    LOG.info("waitForAjax - another 50 ms");
+                    obj.wait(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

@@ -24,8 +24,9 @@ public class DailyPlannerOverviewIT extends SeleniumTestBase {
 
         final EntryPage entryPage = overviewPage.nextPage(EntryPage.class);
         entryPage.getTitleInput().setValue("Auto waschen");
-        entryPage.getKindInput().setValue("HOMEWORK");
+        entryPage.getKindInput().setValue("homework");
         assertThat(entryPage.getTitleInput().getValue(), is("Auto waschen"));
+        assertThat(entryPage.getKindInput().getValue(), is("HOMEWORK"));
         entryPage.getSaveButton().click();
 
         final OverviewPage overviewPage1 = entryPage.nextPage(OverviewPage.class);

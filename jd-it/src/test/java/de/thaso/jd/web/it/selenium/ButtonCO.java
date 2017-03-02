@@ -15,7 +15,6 @@ public class ButtonCO extends BaseCO {
     }
 
     public void click() {
-        waitForElement(getWebElement());
         doClick(getWebElement());
     }
 }
