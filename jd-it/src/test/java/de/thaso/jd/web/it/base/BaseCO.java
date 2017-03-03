@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * @author thaler
  * @since 27.02.17
  */
-public abstract class BaseCO implements InjectableComponent {
+public abstract class BaseCO {
 
     private static Logger LOG = LoggerFactory.getLogger(BaseCO.class);
 
@@ -25,7 +25,6 @@ public abstract class BaseCO implements InjectableComponent {
     private RemoteWebDriver webDriver;
     private String cssSelector;
 
-    @Override
     public void injectElement(final RemoteWebDriver webDriver, final WebElement webElement, final String cssSelector) {
         this.webDriver = webDriver;
         this.webElement = webElement;

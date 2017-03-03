@@ -33,12 +33,11 @@ public abstract class BasePO {
             page.waitForPage();
 
             for (final Field field : pageClass.getDeclaredFields()) {
-                if (field.getAnnotation(PageObjectComponent.class) != null) {
-
-                    final FindBy findBy = field.getAnnotation(FindBy.class);
+                final FindBy findBy = field.getAnnotation(FindBy.class);
+                if (findBy != null) {
                     final WebElement webElement = webDriver.findElementByCssSelector(findBy.css());
 
-                    final InjectableComponent instance = (InjectableComponent)field.getType().newInstance();
+                    final BaseCO instance = (BaseCO)field.getType().newInstance();
                     instance.injectElement(webDriver, webElement, findBy.css());
 
                     field.setAccessible(true);

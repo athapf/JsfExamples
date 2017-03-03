@@ -24,17 +24,23 @@
                     <h:outputLabel styleClass="label" value="#{msg['work.overview.entrylist.label']}" for="entrylist"/>
                     <p:dataTable id="entrylist" value="#{dpOverviewModel.tableRowList}"
                                  var="row">
-                        <p:column id="date">
+                        <p:column>
                             <f:facet name="header">
                                 <h:outputText value="#{msg['work.overview.entrylist.date.header']}"/>
                             </f:facet>
-                            <h:outputText value="#{row.date}"/>
+                            <h:outputText id="date" value="#{row.date}" converter="dateConverter"/>
                         </p:column>
-                        <p:column id="title">
+                        <p:column>
                             <f:facet name="header">
                                 <h:outputText value="#{msg['work.overview.entrylist.title.header']}"/>
                             </f:facet>
-                            <h:outputText value="#{row.title}"/>
+                            <h:outputText id="title" value="#{row.title}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{msg['work.overview.entrylist.kind.header']}"/>
+                            </f:facet>
+                            <h:outputText id="kind" value="#{row.kind}"/>
                         </p:column>
                     </p:dataTable>
                 </h:panelGrid>

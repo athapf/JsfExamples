@@ -1,8 +1,7 @@
 package de.thaso.jd.web.it.pages;
 
-import de.thaso.jd.web.it.selenium.ButtonCO;
-import de.thaso.jd.web.it.selenium.InputCO;
-import de.thaso.jd.web.it.base.PageObjectComponent;
+import de.thaso.jd.web.it.components.ButtonCO;
+import de.thaso.jd.web.it.components.InputCO;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 
@@ -15,23 +14,18 @@ import org.openqa.selenium.support.How;
 public class EntryPage extends StandardPage {
 
     @FindBy(how = How.CSS, css = "*[id$='saveButton']")
-    @PageObjectComponent
     private ButtonCO saveButton;
 
     @FindBy(how = How.CSS, css = "*[id$='cancelButton']")
-    @PageObjectComponent
     private ButtonCO cancelButton;
 
     @FindBy(how = How.CSS, css = "*[id$='date']")
-    @PageObjectComponent
     private InputCO dateInput;
 
     @FindBy(how = How.CSS, css = "*[id$='title']")
-    @PageObjectComponent
     private InputCO titleInput;
 
     @FindBy(how = How.CSS, css = "*[id$='kind']")
-    @PageObjectComponent
     private InputCO kindInput;
 
     @Override
