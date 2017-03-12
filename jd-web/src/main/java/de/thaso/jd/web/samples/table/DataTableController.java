@@ -25,11 +25,14 @@ public class DataTableController {
     @Inject
     private DataTableModel dataTableModel;
 
+    @Inject
+    private LazyTableModel lazyTableModel;
+
     public void filterDataTabel() {
         LOG.info("filter data table with {}", dataTableModel.getFilterText());
 
         if (StringUtils.isEmpty(dataTableModel.getFilterText())) {
-            resetDataTable();
+            resetFilteredRows();
         } else {
             dataTableModel.setFilteredRows(filterRows(dataTableModel.getRows(), dataTableModel.getFilterText()));
         }
@@ -45,7 +48,16 @@ public class DataTableController {
         return filteredRows;
     }
 
-    private void resetDataTable() {
+    private void resetFilteredRows() {
         dataTableModel.setFilteredRows(dataTableModel.getRows());
+    }
+
+    public void sortTable() {
+        LOG.info("sort table ...");
+        lazyTableModel.reset();
+    }
+
+    public void resetDataTable() {
+        lazyTableModel.reset();
     }
 }

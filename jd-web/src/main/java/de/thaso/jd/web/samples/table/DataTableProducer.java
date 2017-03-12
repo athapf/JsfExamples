@@ -2,8 +2,9 @@ package de.thaso.jd.web.samples.table;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.New;
 import javax.enterprise.inject.Produces;
@@ -16,6 +17,8 @@ import javax.inject.Named;
  * @since 07.02.17
  */
 public class DataTableProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DataTableProducer.class);
 
     @Produces
     @SessionScoped
@@ -41,5 +44,14 @@ public class DataTableProducer {
             result.getAttributes().put(key, RandomStringUtils.randomAlphanumeric(10));
         }
         return result;
+    }
+
+    @Produces
+    @SessionScoped
+    @Named("lazyTable")
+    public LazyTableModel produceLazyTableModel(@New LazyTableModel lazyTableModel) {
+        LOG.info("load in lazy table model");
+        lazyTableModel.init();
+        return lazyTableModel;
     }
 }
