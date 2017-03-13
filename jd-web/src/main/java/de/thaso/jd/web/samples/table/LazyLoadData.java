@@ -5,7 +5,11 @@ import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by thaler on 10.03.17.
@@ -23,13 +27,31 @@ public class LazyLoadData extends LazyDataModel<SimpleTableRow> {
     @Override
     public Object getRowKey(SimpleTableRow object) {
         LOG.info("----------------- getRowKey");
-        return "" + object.getIndex();
+        return (Integer)object.getIndex();
     }
 
     @Override
     public SimpleTableRow getRowData(String rowKey) {
-        LOG.info("----------------- getRowData");
+        LOG.info("----------------- getRowData: {} -> {}", rowKey, super.getRowData(rowKey));
         return super.getRowData(rowKey);
+    }
+
+    @Override
+    public boolean isRowAvailable() {
+        LOG.info("----------------- isRowAvailable: {} - {}", super.isRowAvailable(), getRowIndex());
+        return super.isRowAvailable();
+    }
+
+    @Override
+    public SimpleTableRow getRowData() {
+        LOG.info("----------------- getRowData: {}", super.getRowData());
+        return super.getRowData();
+    }
+
+    @Override
+    public void setRowIndex(final int rowIndex) {
+        LOG.info("-------------->>- setRowIndex: {}", rowIndex);
+        super.setRowIndex(rowIndex);
     }
 
     @Override
@@ -80,5 +102,25 @@ public class LazyLoadData extends LazyDataModel<SimpleTableRow> {
         );
         setWrappedData(rowList);
         return rowList;
+    }
+
+    @Override
+    public int getRowCount() {
+        LOG.info("............. getRowCount: {}", super.getRowCount());
+        return super.getRowCount();
+        //return 50;
+    }
+
+    @Override
+    public Object getWrappedData() {
+        LOG.info("............. getWrappedData");
+        return super.getWrappedData();
+    }
+
+    @Override
+    public int getPageSize() {
+        LOG.info("............. getPageSize: {}", super.getPageSize());
+        return super.getPageSize();
+        //return 15;
     }
 }

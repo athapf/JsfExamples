@@ -58,6 +58,7 @@ public class DataTableController {
     }
 
     public void resetDataTable() {
-        lazyTableModel.reset();
+        LOG.info("====== >> reset data table ...");
+        //lazyTableModel.reset();
     }
 }

@@ -3,7 +3,6 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
@@ -24,10 +23,11 @@
                                      update=":form:dataTable"/>
                 </h:panelGroup>
                 <p:dataTable id="dataTable" value="#{lazyTable.lazyLoadData}" var="row" rows="#{lazyTable.initRows}"
-                             scrollable="true" scrollHeight="400"
+                             scrollable="true" scrollHeight="380"
                              liveScroll="true" scrollRows="#{lazyTable.blockSize}" lazy="true"
                              rowKey="row.rowKey" sortBy="#{row.name}">
-                    <p:ajax event="sort" update=":form:dataTable" listener="#{dataTableController.sortTable()}"/>
+                    <!--p:ajax event="sort" update=":form:dataTable" listener="#{dataTableController.sortTable()}"/-->
+                    <p:ajax event="page" update=":form:dataTable" listener="#{dataTableController.resetDataTable()}"/>
                     <p:column sortBy="#{row.index}">
                         <f:facet name="header">
                             <h:outputText value="Index"/>
