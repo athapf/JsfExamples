@@ -5,11 +5,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * SessionSizeBean
@@ -20,25 +18,33 @@ import java.lang.reflect.Modifier;
 @Named
 @ApplicationScoped
 public class SessionSizeBean {
-    public static final Logger LOG = LoggerFactory.getLogger(SessionSizeBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SessionSizeBean.class);
+
+    private static final long OBJECT_BASE_SIZE = 16L;
+    private static final long ARRAY_BASE_SIZE = 24L;
+
+    private static final long PADDING_SIZE = 8L;
+    private static final long PRIMITIV_WITH_PADDING_SIZE = 8L;
+    private static final long REFERENCE_WITH_PADDING_SIZE = 8L;
+
+    private static final long BOOLEAN_SIZE = 1L;
+    private static final long BYTE_SIZE = 1L;
+    private static final long SHORT_SIZE = 2L;
+    private static final long CHAR_SIZE = 2L;
+    private static final long INTEGER_SIZE = 4L;
+    private static final long FLOAT_SIZE = 4L;
+    private static final long LONG_SIZE = 8L;
+    private static final long DOUBLE_SIZE = 8L;
+    private static final long REFERENCE_SIZE = 4L;
+
+    private static final long EMPTY_SIZE = 0L;
 
     public long calculateHeapSizeOf(final Object object) {
-        try {
-            final Method hashCodeMethod = Object.class.getDeclaredMethod("hashCode");
-            final int objHashCode = (Integer) hashCodeMethod.invoke(object);
-            LOG.info("calculate object: {}", objHashCode);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return calculateObjectSize(object);
+        Set<Object> processedObjects = new HashSet<>();
+        return calculateObject(processedObjects, object);
     }
 
-    private long calculateObjectSize(final Object object) {
-
+    private long calculateObject(final Set<Object> processedObjects, final Object object) {
         if(object != null) {
             final Class<?> objectClass = object.getClass();
             if(objectClass.equals(boolean.class)
@@ -49,74 +55,95 @@ public class SessionSizeBean {
                     || objectClass.equals(long.class)
                     || objectClass.equals(double.class)
                     || objectClass.equals(char.class)) {
-                return 0L;
+                return EMPTY_SIZE;
             } else if (objectClass.isArray()) {
-                return calculateArray(object);
+                logObjectId(object);
+                return calculateArray(processedObjects, object);
             } else {
-                return 16L + calculateObjectFields(object);
+                logObjectId(object);
+                return calculateObjectFields(processedObjects, object);
             }
         }
-        return 0L;
+        return EMPTY_SIZE;
     }
 
-    private long calculateObjectFields(final Object object) {
-        long objectSize = 0L;
-        for(Field field : object.getClass().getDeclaredFields()) {
-            if (!Modifier.isStatic(field.getModifiers())) {
-                final long size = fieldSizeWithPadding(field, object);
-                logFieldInfo(size, field);
-                objectSize += size;
+    private boolean toProcesse(final Object object, final Set<Object> processedObjects) {
+        final boolean contains = processedObjects.contains(object);
+        processedObjects.add(object);
+        return !contains;
+    }
+
+    private long calculateObjectFields(final Set<Object> processedObjects, final Object object) {
+        boolean toProcesse = toProcesse(object, processedObjects);
+        if(toProcesse) {
+            long objectSize = OBJECT_BASE_SIZE;
+            for (Field field : object.getClass().getDeclaredFields()) {
+                if (!Modifier.isStatic(field.getModifiers())) {
+                    final long size = fieldSizeWithPadding(processedObjects, field, object);
+                    logFieldInfo(size, field);
+                    objectSize += size;
+                }
+                logFieldInfo(0, field);
             }
-            logFieldInfo(0, field);
+            return objectSize;
         }
-        return objectSize;
+        return EMPTY_SIZE;
     }
     
-    private long fieldSizeWithPadding(final Field field, final Object object) {
+    private long fieldSizeWithPadding(final Set<Object> processedObjects, final Field field, final Object object) {
         final Class<?> fieldType = field.getType();
         if (fieldType.isPrimitive()) {
-            return 8L;
+            return PRIMITIV_WITH_PADDING_SIZE;
         } else if (fieldType.isArray()) {
             try {
                 field.setAccessible(true);
                 final Object array = field.get(object);
-                return 8L + calculateArray(array);
+                return REFERENCE_WITH_PADDING_SIZE + calculateArray(processedObjects, array);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
-            return 0L;
+            return EMPTY_SIZE;
         }
         // default is reference
         try {
             final Object subObject = field.get(object);
             if(subObject != null) {
-                return 8L + calculateHeapSizeOf(subObject);
+                return REFERENCE_WITH_PADDING_SIZE + calculateObject(processedObjects, subObject);
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-        return 8L;
+        return PADDING_SIZE;
     }
 
-    private long calculateArray(final Object array) {
-        if(array != null) {
+    private long calculateArray(final Set<Object> processedObjects, final Object array) {
+        boolean toProcesse = toProcesse(array, processedObjects);
+        if(array != null && toProcesse) {
             final long arrayLength = Array.getLength(array);
-            final long contentSize = calculateArrayContent(array);
-            LOG.info("array: {} [{}]", array.getClass().getCanonicalName(), arrayLength);
-            return 24L + contentSize + ((((arrayLength * sizeFactor(array.getClass())) + 7L) / 8L) * 8L);
+            final long contentSize = calculateArrayContent(processedObjects, array);
+            logObjectId(array);
+            LOG.info("base={}, array={}, content={}", ARRAY_BASE_SIZE, ((((arrayLength * sizeFactor(array.getClass())) + 7L) / 8L) * 8L), contentSize);
+            return ARRAY_BASE_SIZE + contentSize + ((((arrayLength * sizeFactor(array.getClass())) + 7L) / 8L) * 8L);
         }
-        return 0L;
+        return EMPTY_SIZE;
     }
 
-    private long calculateArrayContent(final Object array) {
-        long contentSize = 0L;
-        LOG.info("calculate array {}", array.getClass().getCanonicalName());
+    private long calculateArrayContent(final Set<Object> processedObjects, final Object array) {
+        long contentSize = EMPTY_SIZE;
         if(array.getClass().getCanonicalName().endsWith("[][]")) {
             final long arrayLength = Array.getLength(array);
             for (int i = 0; i < arrayLength; i++) {
                 // only objects and arrays (no primitives)
                 final Object object = Array.get(array, i);
-                contentSize += calculateObjectSize(object);
+                long size = calculateObject(processedObjects, object);
+                contentSize += size;
+            }
+        } if(array.getClass().isAssignableFrom(Object[].class)) {
+            final long arrayLength = Array.getLength(array);
+            for (int i = 0; i < arrayLength; i++) {
+                final Object object = Array.get(array, i);
+                long size = calculateObject(processedObjects, object);
+                contentSize += size;
             }
         }
         return contentSize;
@@ -125,19 +152,35 @@ public class SessionSizeBean {
     private long sizeFactor(final Class elementType) {
         if (elementType.equals(boolean[].class)
                 || elementType.equals(byte[].class)) {
-            return 1L;
+            return BYTE_SIZE;
         } else if (elementType.equals(short[].class)
                 || elementType.equals(char[].class)) {
-            return 2L;
+            return SHORT_SIZE;
         } else if (elementType.equals(int[].class)
                 || elementType.equals(float[].class)) {
-            return 4L;
+            return INTEGER_SIZE;
         } else if (elementType.equals(long[].class)
                 || elementType.equals(double[].class)) {
-            return 8L;
+            return LONG_SIZE;
         }
         // default is reference, also for multi dimensional arrays
-        return 4L;
+        return REFERENCE_SIZE;
+    }
+
+    private void logObjectId(final Object object) {
+        if(object != null) {
+            try {
+                final Method hashCodeMethod = Object.class.getDeclaredMethod("hashCode");
+                final int objHashCode = (Integer) hashCodeMethod.invoke(object);
+                LOG.info("calculate object@{}: {}", Integer.toHexString(objHashCode), object.getClass().getCanonicalName());
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void logFieldInfo(final long size, final Field field) {
