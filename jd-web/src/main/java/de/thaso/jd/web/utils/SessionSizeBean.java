@@ -122,7 +122,7 @@ public class SessionSizeBean {
             final long arrayLength = Array.getLength(array);
             final long contentSize = calculateArrayContent(processedObjects, array);
             logObjectId(array);
-            LOG.info("base={}, array={}, content={}", ARRAY_BASE_SIZE, ((((arrayLength * sizeFactor(array.getClass())) + 7L) / 8L) * 8L), contentSize);
+            LOG.debug("base={}, array={}, content={}", ARRAY_BASE_SIZE, ((((arrayLength * sizeFactor(array.getClass())) + 7L) / 8L) * 8L), contentSize);
             return ARRAY_BASE_SIZE + contentSize + ((((arrayLength * sizeFactor(array.getClass())) + 7L) / 8L) * 8L);
         }
         return EMPTY_SIZE;
@@ -172,7 +172,7 @@ public class SessionSizeBean {
             try {
                 final Method hashCodeMethod = Object.class.getDeclaredMethod("hashCode");
                 final int objHashCode = (Integer) hashCodeMethod.invoke(object);
-                LOG.info("calculate object@{}: {}", Integer.toHexString(objHashCode), object.getClass().getCanonicalName());
+                LOG.debug("calculate object@{}: {}", Integer.toHexString(objHashCode), object.getClass().getCanonicalName());
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -184,7 +184,7 @@ public class SessionSizeBean {
     }
 
     private void logFieldInfo(final long size, final Field field) {
-        LOG.info("size={}, name={}, modifiers={}, type={}, annotaisons={}",
+        LOG.debug("size={}, name={}, modifiers={}, type={}, annotaisons={}",
                 size,
                 field.getName(),
                 Modifier.toString(field.getModifiers()),
