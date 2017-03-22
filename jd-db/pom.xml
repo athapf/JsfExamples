@@ -5,21 +5,24 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
 
-    <groupId>jsf-demo</groupId>
-    <artifactId>jd</artifactId>
+    <groupId>jd.db</groupId>
+    <artifactId>jd-db</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <modules>
+        <module>jd-db-schema</module>
+        <module>jd-db-common</module>
+        <module>jd-db-store</module>
+        <module>jd-db-it</module>
+    </modules>
+
     <properties>
+        <org.mapstruct.version>1.0.0.Final</org.mapstruct.version>
+        <postgres.version>9.4.1210.jre6</postgres.version>
+
         <slf4j.version>1.7.21</slf4j.version>
         <logback.version>1.1.7</logback.version>
     </properties>
-
-    <modules>
-        <module>jd-db</module>
-        <module>jd-web</module>
-        <!--<module>jd-ejb</module>-->
-        <module>jd-it</module>
-    </modules>
 
     <dependencies>
         <dependency>
@@ -27,6 +30,12 @@
             <artifactId>javaee-api</artifactId>
             <version>6.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${org.mapstruct.version}</version>
         </dependency>
 
         <dependency>
@@ -50,13 +59,21 @@
             <artifactId>logback-core</artifactId>
             <version>${logback.version}</version>
         </dependency>
-        <!--
+
+<!--
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>logback-over-slf4j</artifactId>
+            <version>1.7.21</version>
+        </dependency>
+-->
+<!--
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.21</version>
         </dependency>
-        -->
+-->
 
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -92,7 +109,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>2.13</version>
                 <configuration>
                     <skip>${skipUnitTests}</skip>
                     <excludes>
@@ -108,7 +125,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.19.1</version>
+                <version>2.17</version>
                 <executions>
                     <execution>
                         <id>failsafe-integration-tests</id>
