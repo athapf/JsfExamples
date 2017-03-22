@@ -5,7 +5,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
-import java.lang.reflect.*;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -76,20 +80,37 @@ public class SessionSizeBean {
     private long calculateObjectFields(final Set<Object> processedObjects, final Object object) {
         boolean toProcesse = toProcesse(object, processedObjects);
         if(toProcesse) {
-            long objectSize = OBJECT_BASE_SIZE;
-            for (Field field : object.getClass().getDeclaredFields()) {
-                if (!Modifier.isStatic(field.getModifiers())) {
-                    final long size = fieldSizeWithPadding(processedObjects, field, object);
-                    logFieldInfo(size, field);
-                    objectSize += size;
-                }
-                logFieldInfo(0, field);
-            }
-            return objectSize;
+            final Class<?> processClass = object.getClass();
+            long objectSize = calculateFieldSizeOfClass(processedObjects, object, processClass);
+            return OBJECT_BASE_SIZE + objectSize;
         }
         return EMPTY_SIZE;
     }
-    
+
+    private long calculateFieldSizeOfClass(final Set<Object> processedObjects, final Object object, final Class<?> processClass) {
+        long objectSize = sumFieldSize(processedObjects, object, processClass);
+
+        if (!processClass.equals(Object.class)) {
+            objectSize += calculateFieldSizeOfClass(processedObjects, object, processClass.getSuperclass());
+        }
+        return objectSize;
+    }
+
+    private long sumFieldSize(final Set<Object> processedObjects, final Object object, final Class<?> processClass) {
+        long objectSize = EMPTY_SIZE;
+
+        for (Field field : processClass.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                final long size = fieldSizeWithPadding(processedObjects, field, object);
+                logFieldInfo(size, field);
+                objectSize += size;
+            } else {
+                logFieldInfo(0, field);
+            }
+        }
+        return objectSize;
+    }
+
     private long fieldSizeWithPadding(final Set<Object> processedObjects, final Field field, final Object object) {
         final Class<?> fieldType = field.getType();
         if (fieldType.isPrimitive()) {
@@ -106,6 +127,7 @@ public class SessionSizeBean {
         }
         // default is reference
         try {
+            field.setAccessible(true);
             final Object subObject = field.get(object);
             if(subObject != null) {
                 return REFERENCE_WITH_PADDING_SIZE + calculateObject(processedObjects, subObject);

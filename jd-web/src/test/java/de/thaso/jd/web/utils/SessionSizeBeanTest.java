@@ -1,6 +1,16 @@
 package de.thaso.jd.web.utils;
 
-import de.thaso.jd.web.utils.demo.*;
+import de.thaso.jd.web.utils.demo.SimpleClassWithByteArray;
+import de.thaso.jd.web.utils.demo.SimpleClassWithChar;
+import de.thaso.jd.web.utils.demo.SimpleClassWithDoubleObjectArrayOfArray;
+import de.thaso.jd.web.utils.demo.SimpleClassWithInheritance;
+import de.thaso.jd.web.utils.demo.SimpleClassWithInt;
+import de.thaso.jd.web.utils.demo.SimpleClassWithIntArray;
+import de.thaso.jd.web.utils.demo.SimpleClassWithObject;
+import de.thaso.jd.web.utils.demo.SimpleClassWithObjectArray;
+import de.thaso.jd.web.utils.demo.SimpleClassWithObjectArrayOfArray;
+import de.thaso.jd.web.utils.demo.SimpleClassWithStatic;
+import de.thaso.jd.web.utils.demo.SimpleClassWithStringAndInteger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -60,7 +70,7 @@ public class SessionSizeBeanTest {
 
     @Test
     public void testCalculateHeapSizeOf_StringClassWithSmart() {
-        assertThat(underTest.calculateHeapSizeOf(new String("Smart")), is(72L));
+        assertThat(underTest.calculateHeapSizeOf(new String("Smart")), is(80L));
     }
 
     @Test
@@ -98,7 +108,7 @@ public class SessionSizeBeanTest {
         objects[1][2] = new String("bar x2");
         final SimpleClassWithObjectArray objectWithArray = new SimpleClassWithObjectArray(objects);
         // when
-        assertThat(underTest.calculateHeapSizeOf(objectWithArray), is(272L));
+        assertThat(underTest.calculateHeapSizeOf(objectWithArray), is(288L));
     }
 
     @Test
@@ -111,7 +121,7 @@ public class SessionSizeBeanTest {
         objects[1][2] = element;
         final SimpleClassWithObjectArrayOfArray objectWithArray = new SimpleClassWithObjectArrayOfArray(objects);
         // when
-        assertThat(underTest.calculateHeapSizeOf(objectWithArray), is(208L));
+        assertThat(underTest.calculateHeapSizeOf(objectWithArray), is(216L));
     }
 
     @Test
@@ -122,8 +132,25 @@ public class SessionSizeBeanTest {
         objects[0][1] = element;
         objects[1][0] = element;
         objects[1][2] = element;
-        final SimpleClassWithDoubleObjectArrayOfArray objectWithDoubleArray = new SimpleClassWithDoubleObjectArrayOfArray(objects, objects);
+        final SimpleClassWithDoubleObjectArrayOfArray objectWithFilledObjectArray = new SimpleClassWithDoubleObjectArrayOfArray(objects, objects);
         // when
-        assertThat(underTest.calculateHeapSizeOf(objectWithDoubleArray), is(216L));
+        assertThat(underTest.calculateHeapSizeOf(objectWithFilledObjectArray), is(224L));
+    }
+
+    @Test
+    public void testCalculateHeapSizeOf_SimpleClassWithInheritance() {
+        // given
+        final int[] ints = new int[5];
+        final SimpleClassWithInheritance objectWithInheritance = new SimpleClassWithInheritance(ints, "John", 42);
+        // when
+        assertThat(underTest.calculateHeapSizeOf(objectWithInheritance), is(184L));
+    }
+
+    @Test
+    public void testCalculateHeapSizeOf_SimpleClassWithStringAndInteger() {
+        // given
+        final SimpleClassWithStringAndInteger objectWithStringAndInteger = new SimpleClassWithStringAndInteger("John", 42);
+        // when
+        assertThat(underTest.calculateHeapSizeOf(objectWithStringAndInteger), is(128L));
     }
 }
