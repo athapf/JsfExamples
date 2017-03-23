@@ -44,11 +44,13 @@ public class SessionSizeBean {
     private static final long EMPTY_SIZE = 0L;
 
     public long calculateHeapSizeOf(final Object object) {
-        Set<Object> processedObjects = new HashSet<>();
-        return calculateObject(processedObjects, object);
+        Set<Integer> processedObjects = new HashSet<>();
+        final long result = calculateObject(processedObjects, object);
+        LOG.info("object {} use {} byte of heap size using {} sub objects", object.toString(), result, processedObjects.size());
+        return result;
     }
 
-    private long calculateObject(final Set<Object> processedObjects, final Object object) {
+    private long calculateObject(final Set<Integer> processedObjects, final Object object) {
         if(object != null) {
             final Class<?> objectClass = object.getClass();
             if(objectClass.equals(boolean.class)
@@ -71,13 +73,16 @@ public class SessionSizeBean {
         return EMPTY_SIZE;
     }
 
-    private boolean toProcesse(final Object object, final Set<Object> processedObjects) {
-        final boolean contains = processedObjects.contains(object);
-        processedObjects.add(object);
-        return !contains;
+    private boolean toProcesse(final Object object, final Set<Integer> processedObjects) {
+        final int identityHashCode = System.identityHashCode(object);
+        final boolean notContains = !processedObjects.contains(identityHashCode);
+        if(notContains) {
+            processedObjects.add(identityHashCode);
+        }
+        return notContains;
     }
 
-    private long calculateObjectFields(final Set<Object> processedObjects, final Object object) {
+    private long calculateObjectFields(final Set<Integer> processedObjects, final Object object) {
         boolean toProcesse = toProcesse(object, processedObjects);
         if(toProcesse) {
             final Class<?> processClass = object.getClass();
@@ -87,7 +92,7 @@ public class SessionSizeBean {
         return EMPTY_SIZE;
     }
 
-    private long calculateFieldSizeOfClass(final Set<Object> processedObjects, final Object object, final Class<?> processClass) {
+    private long calculateFieldSizeOfClass(final Set<Integer> processedObjects, final Object object, final Class<?> processClass) {
         long objectSize = sumFieldSize(processedObjects, object, processClass);
 
         if (!processClass.equals(Object.class)) {
@@ -96,7 +101,7 @@ public class SessionSizeBean {
         return objectSize;
     }
 
-    private long sumFieldSize(final Set<Object> processedObjects, final Object object, final Class<?> processClass) {
+    private long sumFieldSize(final Set<Integer> processedObjects, final Object object, final Class<?> processClass) {
         long objectSize = EMPTY_SIZE;
 
         for (Field field : processClass.getDeclaredFields()) {
@@ -111,7 +116,7 @@ public class SessionSizeBean {
         return objectSize;
     }
 
-    private long fieldSizeWithPadding(final Set<Object> processedObjects, final Field field, final Object object) {
+    private long fieldSizeWithPadding(final Set<Integer> processedObjects, final Field field, final Object object) {
         final Class<?> fieldType = field.getType();
         if (fieldType.isPrimitive()) {
             return PRIMITIV_WITH_PADDING_SIZE;
@@ -138,7 +143,7 @@ public class SessionSizeBean {
         return PADDING_SIZE;
     }
 
-    private long calculateArray(final Set<Object> processedObjects, final Object array) {
+    private long calculateArray(final Set<Integer> processedObjects, final Object array) {
         boolean toProcesse = toProcesse(array, processedObjects);
         if(array != null && toProcesse) {
             final long arrayLength = Array.getLength(array);
@@ -150,7 +155,7 @@ public class SessionSizeBean {
         return EMPTY_SIZE;
     }
 
-    private long calculateArrayContent(final Set<Object> processedObjects, final Object array) {
+    private long calculateArrayContent(final Set<Integer> processedObjects, final Object array) {
         long contentSize = EMPTY_SIZE;
         if(array.getClass().getCanonicalName().endsWith("[][]")) {
             final long arrayLength = Array.getLength(array);
