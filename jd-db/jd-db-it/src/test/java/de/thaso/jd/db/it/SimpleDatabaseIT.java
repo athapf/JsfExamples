@@ -24,7 +24,7 @@ import static org.hamcrest.core.Is.is;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
- * SimpleIT
+ * SimpleDatabaseIT
  *
  * @author thaler
  * @since 2017-03-22
