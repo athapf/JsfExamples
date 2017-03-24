@@ -46,7 +46,8 @@ public class SessionSizeBean {
     public long calculateHeapSizeOf(final Object object) {
         Set<Integer> processedObjects = new HashSet<>();
         final long result = calculateObject(processedObjects, object);
-        LOG.info("object {} use {} byte of heap size using {} sub objects", object.toString(), result, processedObjects.size());
+        LOG.info("object {} use {} byte of heap size using {} sub objects", object.toString(),
+                String.format("%,d", result).replace(',', ' '), processedObjects.size());
         return result;
     }
 

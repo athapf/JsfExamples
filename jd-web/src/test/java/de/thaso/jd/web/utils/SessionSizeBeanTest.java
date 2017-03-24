@@ -1,5 +1,6 @@
 package de.thaso.jd.web.utils;
 
+import de.thaso.jd.web.utils.demo.SimpleClassWithBigStringArray;
 import de.thaso.jd.web.utils.demo.SimpleClassWithByteArray;
 import de.thaso.jd.web.utils.demo.SimpleClassWithChar;
 import de.thaso.jd.web.utils.demo.SimpleClassWithDoubleObjectArrayOfArray;
@@ -152,5 +153,13 @@ public class SessionSizeBeanTest {
         final SimpleClassWithStringAndInteger objectWithStringAndInteger = new SimpleClassWithStringAndInteger("John", 42);
         // when
         assertThat(underTest.calculateHeapSizeOf(objectWithStringAndInteger), is(128L));
+    }
+
+    @Test
+    public void testCalculateHeapSizeOf_SimpleClassWithBigStringArray() {
+        // given
+        final SimpleClassWithBigStringArray objectWithBigStringArray = new SimpleClassWithBigStringArray(1800);
+        // when
+        assertThat(underTest.calculateHeapSizeOf(objectWithBigStringArray), is(7248L));
     }
 }
